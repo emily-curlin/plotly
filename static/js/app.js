@@ -120,7 +120,7 @@ function ChartBuilder(sample) {
       let metadataResult = metadataArray[0];
       console.log(metadataResult);
       
-      //use d.s select method to get from <div id="sample-metadata" class="panel-body"></div> indexECC.html
+      //use d3 select method to get from <div id="sample-metadata" class="panel-body"></div> indexECC.html
       //using id to select sample metadata 
       let metadatapanel = d3.select("#sample-metadata")
       //Assign empty string to HTML to clear out metadatapanel
@@ -132,45 +132,47 @@ function ChartBuilder(sample) {
     });
   }
 
-
-
-
-    // 6. Update all the plots when a new sample is selected. Additionally, you are welcome to create any layout that you would like for your dashboard.
-
-
-
-    // 7. Deploy your app to a free static page hosting service, such as GitHub Pages. Submit the links to your deployment and your GitHub repo. Ensure that your repository has regular commits and a thorough README.md file
-    // */
-
-
+  // 6. Update all the plots when a new sample is selected. Additionally, you are welcome to create any layout that you would like for your dashboard
     //initialize the function 
-    function initialize() {
-      d3.json(sample_data).then(function (data) {
-        let sampleNames =data.sampleNames;
-        console.log(sampleNames)
+    function optionChanged(newSample){
+      ChartBuilder(firstSample);
+      Metadata_builder(firstSample);
+    }
 
+
+    function initialize() {
       //inset pulldown menu using code from MDN web docs 
       //<select id="selDataset" onchange="optionChanged(this.value)"></select>
       //refernce class within in html doc, use d3 select to get <select id="selDataset" onchange="optionChanged(this.value)"></select>
-        for (let index = 0; index < sampleNames.length; index++) {
-          //start with pulldown select and chain 
-          pulldownSelect
+      //start with pulldown select and chain 
+      let pulldownSelect= d3.select("#selDataset");
+
+      d3.json(sample_data).then(function (data) {
+        let sampleNames =data.names;
+        console.log(sampleNames)
+
+          for (let index = 0; index < sampleNames.length; index++) {
+            pulldownSelect
             .append("option")
             .text(sampleNames[index])
             .property("value", sampleNames[index])
-
-        };
-          
         
-    
-      //call chart builder function 
-      ChartBuilder(1539);
-
-      //call Meta_builder 
-      Metadata_builder (1539)
-
+          // Use the first sample from the list to build the initial plots
+            let firstSample = sampleNames[0];
+            ChartBuilder(firstSample);
+            Metadata_builder(firstSample);  
+          }
     });
   } 
 
+  // 6. Update all the plots when a new sample is selected. Additionally, you are welcome to create any layout that you would like for your dashboard
+    //initialize the function 
+    function optionChanged(newSample){
+      ChartBuilder(newSample);
+     Metadata_builder(newSample);
+    }
+
+    // 7. Deploy your app to a free static page hosting service, such as GitHub Pages. Submit the links to your deployment and your GitHub repo. Ensure that your repository has regular commits and a thorough README.md file
 
     initialize();
+  
